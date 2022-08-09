@@ -2,7 +2,6 @@ package dogtb
 
 import (
 	"fmt"
-	"github.com/wwj31/dogtb/table"
 	"testing"
 )
 
@@ -31,7 +30,7 @@ func TestCreateArrayStruct(t *testing.T) {
 
 	array := append([]*St{}, st1, st2, st3)
 
-	tab, _ := table.Create(array)
+	tab, _ := Create(array)
 	fmt.Println(tab.String())
 	fmt.Println(tab.String(1))
 	fmt.Println(tab.String(2))

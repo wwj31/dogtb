@@ -1,4 +1,4 @@
-package table
+package dogtb
 
 var Styles = map[int][]string{
 	/*
