@@ -26,9 +26,9 @@ func Create(v ...interface{}) (*Table, error) {
 	switch kind {
 	case reflect.Slice:
 		v0Value := reflect.ValueOf(v0)
-		len := v0Value.Len()
-		slice := reflect.MakeSlice(reflect.TypeOf(make([]interface{}, 1)), len, len)
-		for i := 0; i < len; i++ {
+		v0Len := v0Value.Len()
+		slice := reflect.MakeSlice(reflect.TypeOf(make([]interface{}, 1)), v0Len, v0Len)
+		for i := 0; i < v0Len; i++ {
 			slice.Index(i).Set(v0Value.Index(i))
 		}
 		arr, _ := slice.Interface().([]interface{})
@@ -95,11 +95,7 @@ func Create(v ...interface{}) (*Table, error) {
 	return tb, nil
 }
 
-/*
-┌┬┐  ┌─┐
-├┼┤  │┼│
-└┴┘  └─┘
-*/
+// String get table format
 func (t *Table) String(style ...int) string {
 	if len(style) != 0 {
 		t.style = style[0]
