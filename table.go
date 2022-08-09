@@ -107,11 +107,11 @@ func (t *Table) String(style ...int) string {
 	t.maxLen()
 
 	result := t.line(0) + "\n"
-	result += t.colName() + "\n"
+	result += t.rowData(t.columnsName) + "\n"
 	result += t.line(1) + "\n"
 
-	for i := 0; i < len(t.rows); i++ {
-		result += t.rowData(i) + "\n"
+	for _, row := range t.rows {
+		result += t.rowData(row) + "\n"
 		//result += t.line(1) + "\n"
 	}
 
@@ -162,31 +162,17 @@ func (t *Table) line(typ int) string {
 	return str
 }
 
-func (t *Table) colName() string {
+func (t *Table) rowData(strs []string) string {
 	style := Styles[t.style]
 	str := style[10]
 
-	for n, name := range t.columnsName {
+	for n, name := range strs {
 		widthLen := t.columnWidth(n)
-		spaceRNum := (widthLen - len(name)) / 2
-		spaceLNum := (widthLen - len(name)) - spaceRNum
-		tmp1 := fmt.Sprintf("%-*v", len(name)+spaceRNum, name)
-		tmp2 := fmt.Sprintf("%*v", spaceLNum+len(tmp1), tmp1)
-		str += tmp2
-		str += style[10]
-	}
-	return str
-}
-func (t *Table) rowData(i int) string {
-	style := Styles[t.style]
-	str := style[10]
-
-	for n, name := range t.rows[i] {
-		widthLen := t.columnWidth(n)
-		spaceRNum := (widthLen - len(name)) / 2
-		spaceLNum := (widthLen - len(name)) - spaceRNum
-		tmp1 := fmt.Sprintf("%-*v", len(name)+spaceRNum, name)
-		tmp2 := fmt.Sprintf("%*v", spaceLNum+len(tmp1), tmp1)
+		runeLen := len([]rune(name))
+		spaceRNum := (widthLen - runeLen) / 2
+		spaceLNum := (widthLen - runeLen) - spaceRNum
+		tmp1 := fmt.Sprintf("%-*v", runeLen+spaceRNum, name)
+		tmp2 := fmt.Sprintf("%*v", spaceLNum+runeLen+spaceRNum, tmp1)
 		str += tmp2
 		str += style[10]
 	}

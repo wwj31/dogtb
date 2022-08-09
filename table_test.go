@@ -13,7 +13,7 @@ func TestCreateArrayStruct(t *testing.T) {
 	}
 
 	st1 := &St{
-		Name:  "hmuiy",
+		Name:  "530µs",
 		Age:   15,
 		Class: 1,
 	}
