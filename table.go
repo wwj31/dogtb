@@ -67,7 +67,7 @@ func Create(v ...interface{}) (*Table, error) {
 		)
 
 		for _, elem := range v {
-			if kind == reflect.Pointer {
+			if kind == reflect.Ptr {
 				typ = reflect.ValueOf(elem).Elem().Type()
 				val = reflect.ValueOf(elem).Elem()
 			} else {
