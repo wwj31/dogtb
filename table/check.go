@@ -2,7 +2,7 @@ package table
 
 import "reflect"
 
-func checkAllInOne(arr []interface{}) bool {
+func checkAllInOne(arr ...interface{}) bool {
 	var typ reflect.Type
 	for _, v := range arr {
 		if typ == nil {

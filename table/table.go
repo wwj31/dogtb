@@ -6,10 +6,13 @@ import (
 	"reflect"
 )
 
+const width = 2
+
 type Table struct {
-	columnsName []string
-	rows        [][]string
-	style       int
+	columnsName   []string
+	columnsMaxLen []int
+	rows          [][]string
+	style         int
 }
 
 func Create(v ...interface{}) (*Table, error) {
@@ -21,6 +24,15 @@ func Create(v ...interface{}) (*Table, error) {
 	v0 := v[0]
 	kind := reflect.TypeOf(v0).Kind()
 	switch kind {
+	case reflect.Slice:
+		v0Value := reflect.ValueOf(v0)
+		len := v0Value.Len()
+		slice := reflect.MakeSlice(reflect.TypeOf(make([]interface{}, 1)), len, len)
+		for i := 0; i < len; i++ {
+			slice.Index(i).Set(v0Value.Index(i))
+		}
+		arr, _ := slice.Interface().([]interface{})
+		return Create(arr...)
 	case reflect.String:
 		if !checkAllInOne(v) {
 			return nil, fmt.Errorf("not all-in-one")
@@ -88,8 +100,23 @@ func Create(v ...interface{}) (*Table, error) {
 ├┼┤  │┼│
 └┴┘  └─┘
 */
-func (t *Table) String() string {
-	return t.line1()
+func (t *Table) String(style ...int) string {
+	if len(style) != 0 {
+		t.style = style[0]
+	}
+	t.maxLen()
+
+	result := t.line(0) + "\n"
+	result += t.colName() + "\n"
+	result += t.line(1) + "\n"
+
+	for i := 0; i < len(t.rows); i++ {
+		result += t.rowData(i) + "\n"
+		//result += t.line(1) + "\n"
+	}
+
+	result += t.line(2) + "\n"
+	return result
 }
 
 func (t *Table) addColumn(name string) {
@@ -99,23 +126,77 @@ func (t *Table) addColumn(name string) {
 func (t *Table) addRow(row []string) {
 	t.rows = append(t.rows, row)
 }
+func (t *Table) maxLen() {
+	stats := append(t.rows, t.columnsName)
 
-func (t *Table) line1() string {
-	str := "┌"
-	for n, name := range t.columnsName {
-		for i := 0; i < stringWidth(name); i++ {
-			str += "─"
+	var maxLen []int
+	for i := 0; i < len(t.columnsName); i++ {
+		var max int
+		for j := 0; j < len(stats); j++ {
+			if len(stats[j][i]) > max {
+				max = len(stats[j][i])
+			}
+		}
+
+		maxLen = append(maxLen, max)
+	}
+
+	t.columnsMaxLen = maxLen
+}
+
+// line type valid in(0,1,2),define top and middle and bottom of frame
+func (t *Table) line(typ int) string {
+	style := Styles[t.style]
+	str := style[LineLEdge[typ]]
+	for n := range t.columnsName {
+		for i := 0; i < t.columnWidth(n); i++ {
+			str += style[9]
 		}
 
 		if n == len(t.columnsName)-1 {
-			str += "┐"
+			str += style[LineREdge[typ]]
 		} else {
-			str += "┬"
+			str += style[LineSplit[typ]]
 		}
 	}
 	return str
 }
 
-func stringWidth(str string) int {
-	return len(str) + 2
+func (t *Table) colName() string {
+	style := Styles[t.style]
+	str := style[10]
+
+	for n, name := range t.columnsName {
+		widthLen := t.columnWidth(n)
+		spaceRNum := (widthLen - len(name)) / 2
+		spaceLNum := (widthLen - len(name)) - spaceRNum
+		tmp1 := fmt.Sprintf("%-*v", len(name)+spaceRNum, name)
+		tmp2 := fmt.Sprintf("%*v", spaceLNum+len(tmp1), tmp1)
+		str += tmp2
+		str += style[10]
+	}
+	return str
+}
+func (t *Table) rowData(i int) string {
+	style := Styles[t.style]
+	str := style[10]
+
+	for n, name := range t.rows[i] {
+		widthLen := t.columnWidth(n)
+		spaceRNum := (widthLen - len(name)) / 2
+		spaceLNum := (widthLen - len(name)) - spaceRNum
+		tmp1 := fmt.Sprintf("%-*v", len(name)+spaceRNum, name)
+		tmp2 := fmt.Sprintf("%*v", spaceLNum+len(tmp1), tmp1)
+		str += tmp2
+		str += style[10]
+	}
+	return str
+}
+
+func (t *Table) columnWidth(n int) int {
+	v := t.columnsMaxLen[n] + width
+	if v%2 != 0 {
+		v++
+	}
+	return v
 }
