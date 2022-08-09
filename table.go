@@ -40,13 +40,13 @@ func Create(v ...interface{}) (*Table, error) {
 		for _, colName := range v {
 			tb.addColumn(colName.(string))
 		}
-	case reflect.Struct, reflect.Pointer:
+	case reflect.Struct, reflect.Ptr:
 		if !checkAllInOne(v) {
 			return nil, fmt.Errorf("not all-in-one")
 		}
 
 		var v0typ reflect.Type
-		if kind == reflect.Pointer {
+		if kind == reflect.Ptr {
 			v0typ = reflect.ValueOf(v0).Elem().Type()
 		} else {
 			v0typ = reflect.TypeOf(v0)
