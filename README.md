@@ -1,5 +1,5 @@
 # dogtb
-`dogtab` is formatting tools about tabular string
+`dogtb` is formatting tools about tabular string
 ## primary module
 ```shell
  go get -u github.com/wwj31/dogtb
