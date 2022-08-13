@@ -55,7 +55,7 @@ func Create(v ...interface{}) (*Table, error) {
 		for i := 0; i < v0typ.NumField(); i++ {
 			structFiled := v0typ.Field(i)
 			name := structFiled.Name
-			if tag, ok := structFiled.Tag.Lookup("dogtg"); ok {
+			if tag, ok := structFiled.Tag.Lookup("tb"); ok {
 				name = tag
 			}
 			tb.columnsName = append(tb.columnsName, name)

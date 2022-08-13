@@ -8,31 +8,20 @@ import (
 func TestCreateArrayStruct(t *testing.T) {
 	type St struct {
 		Name  string
-		Age   int `dogtg:"user's Age'"`
+		Id    string
+		Age   int `tb:"user's Age"`
 		Class int
 	}
 
-	st1 := &St{
-		Name:  "530µs",
-		Age:   15,
-		Class: 1,
+	array := []*St{
+		{Name: "wwj", Id: "502948676638566431", Age: 15, Class: 1},
+		{Name: "bartholomew", Id: "501925768954674307", Age: 100, Class: 2},
+		{Name: "bobo", Id: "52258675940625906", Age: 31, Class: 3},
 	}
-	st2 := &St{
-		Name:  "nibgy",
-		Age:   100,
-		Class: 2,
-	}
-	st3 := &St{
-		Name:  "zhgyru",
-		Age:   31,
-		Class: 10000000000,
-	}
-
-	array := append([]*St{}, st1, st2, st3)
-
 	tab, _ := Create(array)
-	fmt.Println(tab.String())
-	fmt.Println(tab.String(1))
-	fmt.Println(tab.String(2))
-	fmt.Println(tab.String(3))
+
+	fmt.Println(tab.String())  // style 0
+	fmt.Println(tab.String(1)) // style 1
+	fmt.Println(tab.String(2)) // style 2
+	fmt.Println(tab.String(3)) // style 3
 }
